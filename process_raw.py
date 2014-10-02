@@ -8,6 +8,7 @@
 
 from sys import argv
 
+from MessageProcessor import MessageProcessor
 from RawWhatsAppDataProcessor import RawWhatsAppDataProcessor
 
 
@@ -27,3 +28,5 @@ if __name__ == '__main__':
         all_messages.extend(messages)
 
     print 'Gathered %d messages for data set' % len(all_messages)
+
+    message_processor = MessageProcessor()
