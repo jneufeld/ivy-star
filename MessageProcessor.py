@@ -6,6 +6,7 @@
 # Imports
 # ------------------------------------------------------------------------------
 
+import operator
 import re
 
 
@@ -22,7 +23,178 @@ class MessageProcessor(object):
         """
         Creates a message processor.
         """
-        pass
+        self.common_words = [
+            'i',
+            'you',
+            'a',
+            'to',
+            'the',
+            'and',
+            'it',
+            'that',
+            'of',
+            'is',
+            'its',
+            'so',
+            'in',
+            'but',
+            'not',
+            'my',
+            'was',
+            'are',
+            'do',
+            'im',
+            'your',
+            'for',
+            'me',
+            'on',
+            'at',
+            'have',
+            'be',
+            'thats',
+            'with',
+            'what',
+            'if',
+            'how',
+            'dont',
+            'or',
+            'this',
+        ]
+
+        self.swear_words = [
+                'fuck',
+                'shit',
+                'asshole',
+                'bitch',
+                'ass',
+                'damn',
+                'damned',
+                'motherfucker',
+            ]
+
+        self.sexual_words = [
+                'dick',
+                'penis',
+                'cock',
+                'prick',
+                'wang',
+                'balls',
+                'nuts',
+                'nutsack',
+                'scrotum',
+                'vagina',
+                'pussy',
+                'twat',
+                'breast',
+                'breasts',
+                'tit',
+                'tits',
+                'titties',
+                'boob',
+                'boobs',
+                'boobies',
+                'slut',
+                'whore',
+                'blowjob',
+                'sex',
+                'sexual',
+            ]
+
+
+    def most_used_words(self, messages, top=10):
+        """
+        Find the most used words in the messages. Exclude common words. Return
+        as many as asked for, but by default, return the top 10.
+
+        Arguments:
+            messages<[TextMessage]> -- List of messages.
+            top<int>                -- Option, number of words to return.
+
+        Returns:
+            List of tuples with most used, non-common words and it's hit count,
+            like so: [(word, hits), ...].
+        """
+        if len(messages) == 0:
+            return []
+
+        result = []
+
+        all_words = {}
+        for message in messages:
+            words = self.extract_words(message.body)
+            words = [word.lower() for word in words]
+
+            for word in words:
+                if word in self.common_words:
+                    continue
+                if word not in all_words:
+                    all_words[word] = 1
+                else:
+                    all_words[word] += 1
+
+        result = sorted(all_words.items(), key=operator.itemgetter(1))
+        result.reverse()
+        result = result[:top + 1]
+
+        return result
+
+
+    def swear_words_per_message(self, messages):
+        """
+        Find the average number of swear words per message.
+
+        Arguments:
+            messages<[TextMessage]> -- List of messages.
+
+        Returns:
+            Average number of swear words per message.
+        """
+        if len(messages) == 0:
+            return 0.0
+
+        result = 0.0
+
+        swears = 0
+        for message in messages:
+            words = self.extract_words(message.body)
+            words = [word.lower() for word in words]
+
+            for word in words:
+                if word in self.swear_words:
+                    swears += 1
+
+        result = float(swears) / len(messages)
+
+        return result
+
+
+    def sexual_words_per_message(self, messages):
+        """
+        Find the average number of sexual words per message.
+
+        Arguments:
+            messages<[TextMessage]> -- List of messages.
+
+        Returns:
+            Average number of sexual words per message.
+        """
+        if len(messages) == 0:
+            return 0.0
+
+        result = 0.0
+
+        total_sexual_words = 0
+        for message in messages:
+            words = self.extract_words(message.body)
+            words = [word.lower() for word in words]
+
+            for word in words:
+                if word in self.sexual_words:
+                    total_sexual_words += 1
+
+        result = float(total_sexual_words) / len(messages)
+
+        return result
 
 
     def average_message_length(self, messages):
