@@ -35,7 +35,10 @@ class MessageProcessor(object):
         Returns:
             Average number of characters per message.
         """
-        result = 0
+        if len(messages) == 0:
+            return 0.0
+
+        result = 0.0
 
         total_characters = 0
         for message in messages:
@@ -56,7 +59,10 @@ class MessageProcessor(object):
         Returns:
             Average number of characters per sentence.
         """
-        result = 0
+        if len(messages) == 0:
+            return 0.0
+
+        result = 0.0
 
         total_characters, total_sentences = 0, 0
 
@@ -67,7 +73,8 @@ class MessageProcessor(object):
                 total_characters += len(sentence)
                 total_sentences += 1
 
-        result = float(total_characters) / total_sentences
+        if total_sentences > 0:
+            result = float(total_characters) / total_sentences
 
         return result
 
@@ -82,7 +89,10 @@ class MessageProcessor(object):
         Returns:
             Average number characters per word.
         """
-        result = 0
+        if len(messages) == 0:
+            return 0.0
+
+        result = 0.0
 
         total, count = 0, 0
 
@@ -91,7 +101,8 @@ class MessageProcessor(object):
             total += len(''.join(words))
             count += len(words)
 
-        result = float(total) / count
+        if count > 0:
+            result = float(total) / count
 
         return result
 
@@ -106,6 +117,9 @@ class MessageProcessor(object):
         Returns:
             Average number of sentences per message.
         """
+        if len(messages) == 0:
+            return 0.0
+
         result = 0.0
 
         total_sentences = 0
@@ -128,6 +142,9 @@ class MessageProcessor(object):
         Returns:
             Average number of words per sentence.
         """
+        if len(messages) == 0:
+            return 0.0
+
         result = 0.0
 
         total_words, total_sentences = 0, 0
@@ -139,7 +156,8 @@ class MessageProcessor(object):
             total_sentences += len(sentences)
             total_words += len(words)
 
-        result = float(total_words) / total_sentences
+        if total_sentences > 0:
+            result = float(total_words) / total_sentences
 
         return result
 
@@ -154,6 +172,9 @@ class MessageProcessor(object):
         Returns:
             Average number of words per message.
         """
+        if len(messages) == 0:
+            return 0.0
+
         result = 0.0
 
         total_words = 0
@@ -185,7 +206,8 @@ class MessageProcessor(object):
             if sentences[len(sentences) - 1] == '':
                 del sentences[len(sentences) - 1]
 
-            result = sentences
+            for sentence in sentences:
+                result.append(sentence.lstrip())
 
         return result
 
